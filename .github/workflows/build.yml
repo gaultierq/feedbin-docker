@@ -20,11 +20,6 @@ jobs:
             context: feedbin-extract
             tag: latest
 
-          - name: feedbin-image
-            file: Dockerfile
-            context: feedbin-image
-            tag: latest
-
           - name: feedbin-refresher
             file: Dockerfile
             context: feedbin-refresher
