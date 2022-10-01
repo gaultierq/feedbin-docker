@@ -10,7 +10,7 @@ jobs:
       matrix:
         image:
           - name: feedbin-web
-            context: .
+            context: feedbin-web
             file: Dockerfile
             build-args: FEEDBIN_REPO=https://github.com/AndreasSko/feedbin.git
             tag: latest
