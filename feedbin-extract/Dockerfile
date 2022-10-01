@@ -9,7 +9,7 @@ RUN apk add --no-cache \
     nodejs \
     npm \
     && git clone ${FEEDBIN_EXTRACT_REPO:-https://github.com/feedbin/extract.git} /app \
-    && npm ci \
+    && npm install \
     && mkdir users \
     && rm -rf .git
 
