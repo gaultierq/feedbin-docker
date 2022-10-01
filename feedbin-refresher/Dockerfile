@@ -13,6 +13,8 @@ RUN apk add --no-cache \
     ruby-json \
     libidn-dev \
     libxml2-dev \
+    glib-dev \
+    vips \
     && git clone ${FEEDBIN_REFRESHER_REPO:-https://github.com/feedbin/refresher.git} /app \
     && gem install bundler \
     && bundle install \
