@@ -25,6 +25,7 @@ RUN apk add --no-cache \
     postgresql-client \
     libpq \
     postgresql-dev \
+    glib-dev \
     && gem install 'etc:1.2.0' 'idn-ruby:0.1.0' \
     && git clone ${FEEDBIN_REPO:-https://github.com/feedbin/feedbin.git} /app \
     && gem install bundler \
