@@ -20,10 +20,6 @@ jobs:
             context: feedbin-extract
             tag: latest
 
-          - name: feedbin-refresher
-            file: Dockerfile
-            context: feedbin-refresher
-            tag: latest
       fail-fast: false
 
     steps:
