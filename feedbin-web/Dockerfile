@@ -1,4 +1,4 @@
-FROM alpine:3.13
+FROM alpine:3.20
 
 ARG FEEDBIN_URL
 ARG FEEDBIN_REPO
@@ -14,6 +14,7 @@ RUN apk add --no-cache \
     ruby-bigdecimal \
     ruby-io-console \
     build-base \
+    gcompat \
     imagemagick-dev \
     imagemagick-libs \
     libxml2-dev \
@@ -27,9 +28,11 @@ RUN apk add --no-cache \
     postgresql-dev \
     glib-dev \
     vips \
+    yaml-dev \
     && gem install 'etc:1.2.0' 'idn-ruby:0.1.0' \
     && git clone ${FEEDBIN_REPO:-https://github.com/feedbin/feedbin.git} /app \
     && gem install bundler \
+    && bundle lock --add-platform x86_64-linux-musl \
     && bundle install \
     && bundle exec rake assets:precompile \
     && rm -rf .git
