@@ -134,15 +134,6 @@ services:
       timeout: 20s
       retries: 3
 
-  feedbin-refresher:
-    build: ./feedbin-refresher
-    environment:
-      - REDIS_URL
-      - TWITTER_KEY
-      - TWITTER_SECRET
-    container_name: feedbin-refresher
-    restart: unless-stopped
-
   feedbin-image:
     build: ./feedbin-image
     environment:
