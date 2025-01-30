@@ -33,30 +33,30 @@ x-common-variables: &feedbin-environment
 - TWITTER_SECRET
 
 services:
-  feedbin-caddy:
-    image: caddy:alpine
-    container_name: feedbin-caddy
-    ports:
-      - 80:80
-      - 443:443
-    environment:
-      - FEEDBIN_HOST
-      - FEEDBIN_API_HOST
-      - MINIO_HOST
-      - EXTRACT_HOST
-      - CAMO_HOST
-    volumes:
-      - $PWD/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - feedbin_caddy_data:/data
-      - feedbin_caddy_config:/config
-    restart: unless-stopped
-    depends_on:
-      - feedbin-minio
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://$FEEDBIN_HOST/health"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
+#  feedbin-caddy:
+#    image: caddy:alpine
+#    container_name: feedbin-caddy
+#    ports:
+#      - 80:80
+#      - 443:443
+#    environment:
+#      - FEEDBIN_HOST
+#      - FEEDBIN_API_HOST
+#      - MINIO_HOST
+#      - EXTRACT_HOST
+#      - CAMO_HOST
+#    volumes:
+#      - $PWD/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+#      - feedbin_caddy_data:/data
+#      - feedbin_caddy_config:/config
+#    restart: unless-stopped
+#    depends_on:
+#      - feedbin-minio
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://$FEEDBIN_HOST/health"]
+#      interval: 30s
+#      timeout: 20s
+#      retries: 3
 
   feedbin-minio:
     image: minio/minio:latest
@@ -101,6 +101,8 @@ services:
       - feedbin-postgres
     command: bundle exec rails s --port $PORT --binding 0.0.0.0
     restart: unless-stopped
+    ports:
+      - $PORT:$PORT
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:$PORT"]
       interval: 30s
@@ -111,7 +113,7 @@ services:
     build: ./feedbin-web
     container_name: feedbin-workers
     environment: *feedbin-environment
-    command: foreman start
+    command: bundle exec sidekiq
     restart: unless-stopped
 
   feedbin-elasticsearch:
@@ -134,36 +136,34 @@ services:
       timeout: 20s
       retries: 3
 
-  feedbin-image:
-    build: ./feedbin-image
-    environment:
-      - AWS_ACCESS_KEY_ID=$MINIO_ACCESS_KEY
-      - AWS_SECRET_ACCESS_KEY=$MINIO_SECRET_KEY
-      - AWS_S3_BUCKET=$MINIO_BUCKET
-      - AWS_S3_ENDPOINT=https://$MINIO_HOST
-      - AWS_S3_PATH_STYLE
-      - REDIS_URL
-    container_name: feedbin-image
-    restart: unless-stopped
-
-  feedbin-extract:
-    build:
-      context: ./feedbin-extract
-    container_name: feedbin-extract
-    restart: unless-stopped
-
-  camo:
-    image: increments/camo
-    container_name: feedbin-camo
-    environment:
-      - PORT=8081
-      - CAMO_KEY
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
+#  feedbin-image:
+#    build: ./feedbin-image
+#    environment:
+#      - AWS_ACCESS_KEY_ID=$MINIO_ACCESS_KEY
+#      - AWS_SECRET_ACCESS_KEY=$MINIO_SECRET_KEY
+#      - AWS_S3_BUCKET=$MINIO_BUCKET
+#      - AWS_S3_ENDPOINT=https://$MINIO_HOST
+#      - AWS_S3_PATH_STYLE
+#      - REDIS_URL
+#    container_name: feedbin-image
+#    restart: unless-stopped
+#  feedbin-extract:
+#    build:
+#      context: ./feedbin-extract
+#    container_name: feedbin-extract
+#    restart: unless-stopped
+#  camo:
+#    image: increments/camo
+#    container_name: feedbin-camo
+#    environment:
+#      - PORT=8081
+#      - CAMO_KEY
+#    restart: unless-stopped
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:8081"]
+#      interval: 30s
+#      timeout: 20s
+#      retries: 3
 
   feedbin-memcached:
     image: memcached:1.6-alpine
@@ -199,8 +199,8 @@ services:
       retries: 3
 
 volumes:
-  feedbin_caddy_data:
-  feedbin_caddy_config:
+#  feedbin_caddy_data:
+#  feedbin_caddy_config:
   feedbin_minio:
   feedbin_elasticsearch:
   feedbin_redis:
